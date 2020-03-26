@@ -17,10 +17,10 @@ clear all;
 %% Parameters %%
 %%%%%%%%%%%%%%%%
 % Valve
-kv = 0.5; % Flow coefficient in m3/h [5]
+kv = 0.3; % Flow coefficient in m3/h [5]
 
 % Respiratory system
-Rrs = 10; % Airway resistance in cmH20/L/sec [4, p8]
+Rrs = 4; % Airway resistance in cmH20/L/sec [4, p8]
 Ers = 50; % Respiratory system elastance (inverse of lung compliance) in cmH20/L. [4, p7]
 pMax = 1060; % maximum pressure in cmH20
 
@@ -36,7 +36,7 @@ fio2 = 0.3; % FiO2  Natural air includes 21% oxygen, which is equivalent to FiO2
 fmax = 10; % Ma.ximum flow in L/s
 TV = 0.4; % Tidal Volume in L
 PEEP = 5; % Positive end-expiratory pressure (PEEP) in cmH20
-ieRatio = 2; % Inspiratory:Expiratory ratio.
+ieRatio = 2; % Inspiratory:Expiratory ratio. 1:x.
 pD = 4000; % Device tank pressure in cmH2O
 
 %%%%%%%%%%%%%%%%
@@ -55,7 +55,7 @@ tEnd = 24.0;
 ## I:E = 2, bpm = 10
 ## I tijd = 60/10 * 2/3
 ## flow = TV / Itijd
-Itime = (60/bpm) * (ieRatio / (ieRatio + 1));
+Itime = (60/bpm) * (1 / (ieRatio + 1));
 dV_in_L = TV / Itime;
 dV_in = dV_in_L * 3.6; % L/s -> m3/h
 plantModel.dV_in = dV_in;
@@ -87,7 +87,7 @@ while i <= (tEnd / dT) + 1
     plantModel.valveOutOpenRatio = 0.1;
   end
   
-  if i == round(4.58 * (1/dT))
+  if i == round(3.15 * (1/dT))
     plantModel.valveOutOpenRatio = 0.0;
   end
   
@@ -104,7 +104,7 @@ while i <= (tEnd / dT) + 1
     plantModel.valveOutOpenRatio = 0.1;
   end
   
-  if i == round(11.55 * (1/dT))
+  if i == round(10.15 * (1/dT))
     plantModel.valveOutOpenRatio = 0.0;    
   end
   
@@ -118,7 +118,7 @@ while i <= (tEnd / dT) + 1
     plantModel.valveOutOpenRatio = 0.1;
   end
   
-  if i == round(17.08 * (1/dT))
+  if i == round(15.6 * (1/dT))
     plantModel.valveOutOpenRatio = 0.0;
   end
   
@@ -132,7 +132,7 @@ while i <= (tEnd / dT) + 1
     plantModel.valveOutOpenRatio = 0.1;
   end
   
-  if i == round(23.08 * (1/dT))
+  if i == round(21.6 * (1/dT))
     plantModel.valveOutOpenRatio = 0.0;
   end
  
