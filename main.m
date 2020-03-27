@@ -1,4 +1,5 @@
-% Lung Ventilator simulation model
+% Lung Ventilator simulation
+% Usign a volume-dependent elastance model [1]
 % Wilbert van de Ridder - 24-03-2020
 %
 % Sources:
@@ -20,7 +21,7 @@ clear all;
 kv = 0.3; % Flow coefficient in m3/h [5]
 
 % Respiratory system
-Rrs = 4; % Airway resistance in cmH20/L/sec [4, p8]
+Rrs = 6; % Airway resistance in cmH20/L/sec [4, p8]
 Ers = 50; % Respiratory system elastance (inverse of lung compliance) in cmH20/L. [4, p7]
 pMax = 1060; % maximum pressure in cmH20
 
@@ -87,7 +88,7 @@ while i <= (tEnd / dT) + 1
     plantModel.valveOutOpenRatio = 0.1;
   end
   
-  if i == round(3.15 * (1/dT))
+  if i == round(3.05 * (1/dT))
     plantModel.valveOutOpenRatio = 0.0;
   end
   
@@ -101,10 +102,10 @@ while i <= (tEnd / dT) + 1
   end
   
   if i == round(((60/bpm) + Itime + 0.5) * (1/dT))
-    plantModel.valveOutOpenRatio = 0.1;
+    plantModel.valveOutOpenRatio = 0.2;
   end
   
-  if i == round(10.15 * (1/dT))
+  if i == round(9.42 * (1/dT))
     plantModel.valveOutOpenRatio = 0.0;    
   end
   
@@ -115,10 +116,10 @@ while i <= (tEnd / dT) + 1
   
   if i == round((2*(60/bpm) + Itime) * (1/dT))
     plantModel.dV_in = 0;
-    plantModel.valveOutOpenRatio = 0.1;
+    plantModel.valveOutOpenRatio = 0.2;
   end
   
-  if i == round(15.6 * (1/dT))
+  if i == round(14.92 * (1/dT))
     plantModel.valveOutOpenRatio = 0.0;
   end
   
@@ -129,10 +130,10 @@ while i <= (tEnd / dT) + 1
   
   if i == round((3*(60/bpm) + Itime) * (1/dT))
     plantModel.dV_in = 0;
-    plantModel.valveOutOpenRatio = 0.1;
+    plantModel.valveOutOpenRatio = 0.2;
   end
   
-  if i == round(21.6 * (1/dT))
+  if i == round(20.92 * (1/dT))
     plantModel.valveOutOpenRatio = 0.0;
   end
  
@@ -142,9 +143,9 @@ endwhile
 % Plot graphs
 figure(1);
 subplot(3,1,1);
-plot(time, pressure * 1019.72, 'DisplayName','P_{aw}');
+plot(time, pressure * 1019.72 - p0, 'DisplayName','P_{aw}');
 hold on;
-plot([0,time(1,end)],[p0 + PEEP,p0 + PEEP], 'k--', 'DisplayName','PEEP')
+plot([0,time(1,end)],[PEEP,PEEP], 'k--', 'DisplayName','PEEP')
 hold off;
 xlabel('t (s)') 
 ylabel('cmH2O') 

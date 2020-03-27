@@ -12,12 +12,12 @@ To implement valve behaviour, the following model is used: [2]
 ![Valve model Model](https://github.com/Vent4All/lung-device-simulator/raw/master/images/valve_model.png)
 
 ## Simulation #1
-Initial results (TV: 0.4L, I:E = 2, Ers = 50cmH2O/L, Rrs = 10cmH2O/L/s, %E2 = 0.5, PEEP = 5)  
+Initial results (TV: 0.4L, I:E = 2, Ers = 50cmH2O/L, Rrs = 6cmH2O/L/s, %E2 = 0.5, PEEP = 5):
 ![Sim1](https://github.com/Vent4All/lung-device-simulator/raw/master/plots/sim1.png)
 
 Shown are 4 cycles:  
 1. Startup cycle
-2. Cycle with breath hold (BH) of 0.5 seconds at t=10s
+2. Cycle with breath hold (BH) of 0.5 seconds at t=8s
 3. Normal cycle
 4. Normal cycle
 

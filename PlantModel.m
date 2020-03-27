@@ -91,9 +91,14 @@ classdef PlantModel < handle
         obj.V = obj.V + obj.dV * dT;     
      
         % Volume-dependent elastance model   
-        ratioE2 = 0.2;
+        ratioE2 = 0.5;
         ratioE1 = 1 - ratioE2;
-        obj.pRS = obj.Rrs*obj.dV + ratioE1 * obj.Ers * obj.V + ratioE2 * obj.Ers * obj.V^2 + obj.p0;    
+        
+        pResistance = 0;
+        if (obj.dV > 0)
+          pResistance = obj.Rrs*obj.dV;
+        end          
+        obj.pRS = pResistance + ratioE1 * obj.Ers * obj.V + ratioE2 * obj.Ers * obj.V^2 + obj.p0;    
 
         % if over-pressure, release and calculate new volume    
         if obj.pRS > obj.p0 + obj.pMax
