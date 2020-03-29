@@ -29,6 +29,7 @@ classdef PlantModel < handle
       pD                    % bar
       pMax                  % bar
       Ers                   % bar/m3
+      ratioE2               % -
       Rrs                   % bar/m3/h
       rho_d_air             % kg/m3
       rho_d_o2              % kg/m3
@@ -46,7 +47,7 @@ classdef PlantModel < handle
       % rho_d_o2 in kg/m3
       % T in Kelvin
       % kv flow capacity in metric units - m3/h - that a valve will pass for a pressure drop of 1 bar
-      function obj = PlantModel(p0, pD, pMax, Ers, Rrs, rho_d_air, rho_d_o2, T, kv, PEEP)
+      function obj = PlantModel(p0, pD, pMax, Ers, ratioE2, Rrs, rho_d_air, rho_d_o2, T, kv, PEEP)
          if nargin > 0
            % Arguments
            obj.p0 = p0 * 0.000980665;       % cmH2O -> bar
@@ -58,6 +59,7 @@ classdef PlantModel < handle
            obj.rho_d_o2 = rho_d_o2;
            obj.T = T;    
            obj.kv = kv;             
+           obj.ratioE2 = ratioE2;          
            
            % Initialize state
            obj.pRS = obj.p0 + (PEEP * 0.000980665);          
@@ -86,19 +88,17 @@ classdef PlantModel < handle
         
         % Compute new pressure
         % - flow is inlet+output flow (however, in practice they should never be open at the same time!
-        % obj.dV = obj.dV_in - obj.dV_out;
         obj.dV = obj.dV_in - obj.dV_out;
         obj.V = obj.V + obj.dV * dT;     
      
         % Volume-dependent elastance model   
-        ratioE2 = 0.5;
-        ratioE1 = 1 - ratioE2;
+        ratioE1 = 1 - obj.ratioE2;
         
         pResistance = 0;
         if (obj.dV > 0)
           pResistance = obj.Rrs*obj.dV;
         end          
-        obj.pRS = pResistance + ratioE1 * obj.Ers * obj.V + ratioE2 * obj.Ers * obj.V^2 + obj.p0;    
+        obj.pRS = pResistance + ratioE1 * obj.Ers * obj.V + obj.ratioE2 * obj.Ers * obj.V^2 + obj.p0;    
 
         % if over-pressure, release and calculate new volume    
         if obj.pRS > obj.p0 + obj.pMax

@@ -1,5 +1,5 @@
 % Lung Ventilator simulation
-% Usign a volume-dependent elastance model [1]
+% Using a volume-dependent elastance model [1]
 % Wilbert van de Ridder - 24-03-2020
 %
 % Sources:
@@ -13,39 +13,41 @@
 clc;
 clearvars;
 clear all;
+addpath('./components')
 
 %%%%%%%%%%%%%%%%
 %% Parameters %%
 %%%%%%%%%%%%%%%%
 % Valve
-kv = 0.3; % Flow coefficient in m3/h [5]
+kv = 0.3;           % Flow coefficient in m3/h [5]
 
 % Respiratory system
-Rrs = 6; % Airway resistance in cmH20/L/sec [4, p8]
-Ers = 50; % Respiratory system elastance (inverse of lung compliance) in cmH20/L. [4, p7]
-pMax = 1060; % maximum pressure in cmH20
+Rrs = 6;            % Airway resistance in cmH20/L/sec [4, p8]
+Ers = 50;           % Respiratory system elastance (inverse of lung compliance) in cmH20/L. [4, p7]
+ratioE2 = 0.5;      % %E2
+pMax = 1060;        % maximum pressure in cmH20
 
 % Environment
-p0 = 1033; % Ambient perssure in cmH20
-rho_d_air = 1.205; % density of air (gas) in kg/m3 at 273.15 Kelvin and 1013mbar / 1 atm [3]
-rho_d_o2 = 1.331; % density of oxygen (gas) in kg/m3 at 273.15 Kelvin and 1013mbar / 1 atm [3]
-T = 293.15; % Upstream temperature in Kelvin (20 degrees Celsius)
+p0 = 1033;          % Ambient perssure in cmH20
+rho_d_air = 1.205;  % density of air (gas) in kg/m3 at 273.15 Kelvin and 1013mbar / 1 atm [3]
+rho_d_o2 = 1.331;   % density of oxygen (gas) in kg/m3 at 273.15 Kelvin and 1013mbar / 1 atm [3]
+T = 293.15;         % Upstream temperature in Kelvin (20 degrees Celsius)
 
 % Device settings
-bpm = 10; % Breaths per minute
-fio2 = 0.3; % FiO2  Natural air includes 21% oxygen, which is equivalent to FiO2 of 0.21. Oxygen-enriched air has a higher FiO2 than 0.21; up to 1.00 which means 100% oxygen.
-fmax = 10; % Ma.ximum flow in L/s
-TV = 0.4; % Tidal Volume in L
-PEEP = 5; % Positive end-expiratory pressure (PEEP) in cmH20
-ieRatio = 2; % Inspiratory:Expiratory ratio. 1:x.
-pD = 4000; % Device tank pressure in cmH2O
+bpm = 10;           % Breaths per minute
+fio2 = 0.3;         % FiO2  Natural air includes 21% oxygen, which is equivalent to FiO2 of 0.21. Oxygen-enriched air has a higher FiO2 than 0.21; up to 1.00 which means 100% oxygen.
+fmax = 10;          % Maximum flow in L/s
+TV = 0.4;           % Tidal Volume in L
+PEEP = 5;           % Positive end-expiratory pressure (PEEP) in cmH20
+ieRatio = 2;        % Inspiratory:Expiratory ratio. 1:x.
+pD = 4000;          % Device tank pressure in cmH2O
 
 %%%%%%%%%%%%%%%%
 %% Simulation %%
 %%%%%%%%%%%%%%%%
 
 % Initialize actors
-plantModel = PlantModel(p0, pD, pMax, Ers, Rrs, rho_d_air, rho_d_o2, T, kv, PEEP);
+plantModel = PlantModel(p0, pD, pMax, Ers, ratioE2, Rrs, rho_d_air, rho_d_o2, T, kv, PEEP);
 plantModel.adjustFiO2(fio2);
 plantModel.valveInOpenRatio = 0.1;
 
