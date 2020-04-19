@@ -19,8 +19,8 @@ addpath('./components')
 %% Parameters %%
 %%%%%%%%%%%%%%%%
 % Valve
-oD_in = 2;           % Orifice diameter in mm
-oD_out = 10;           % Orifice diameter in mm
+oD_in = 2;          % Orifice diameter in mm
+oD_out = 10;        % Orifice diameter in mm
 
 % Respiratory system
 Rrs = 6;            % Airway resistance in cmH20/L/sec [4, p8]
@@ -83,29 +83,29 @@ while i <= (tEnd / dT) + 1
   
   % Cycle 1
   if i == round(0.2 * (1/dT))
-     plantModel.dV_in = dV_in;
-  end
-  
-  if i == round(0.5 * (1/dT))
-    % break;
+     % plantModel.dV_in = dV_in;
+     plantModel.valveInOpenRatio = 0.1;
   end
   
   if i == round(Itime * (1/dT))
-    plantModel.dV_in = 0;
+    % plantModel.dV_in = 0;
+    plantModel.valveInOpenRatio = 0;
     plantModel.valveOutOpenRatio = 0.1;
   end
    
-  if i == round(2.8 * (1/dT))
+  if i == round(3.0 * (1/dT))
     plantModel.valveOutOpenRatio = 0.0;
   end
   
   % Cycle 2 (with breath hold)
   if i == round((60/bpm)* (1/dT))
-    plantModel.dV_in = dV_in;
+    % plantModel.dV_in = dV_in;
+     plantModel.valveInOpenRatio = 0.1;
   end
   
   if i == round(((60/bpm) + Itime) * (1/dT))
-    plantModel.dV_in = 0;
+    % plantModel.dV_in = 0;
+    plantModel.valveInOpenRatio = 0;
   end
   
   if i == round(((60/bpm) + Itime + 0.5) * (1/dT))
@@ -118,11 +118,13 @@ while i <= (tEnd / dT) + 1
   
   % Cycle 3
   if i == round(2*(60/bpm)* (1/dT))
-    plantModel.dV_in = dV_in;
+    % plantModel.dV_in = dV_in;
+    plantModel.valveInOpenRatio = 0.1;
   end
   
   if i == round((2*(60/bpm) + Itime) * (1/dT))
-    plantModel.dV_in = 0;
+    % plantModel.dV_in = 0;
+    plantModel.valveInOpenRatio = 0;
     plantModel.valveOutOpenRatio = 0.2;
   end
   
@@ -132,11 +134,13 @@ while i <= (tEnd / dT) + 1
   
    % Cycle 4
   if i == round(3*(60/bpm)* (1/dT))
-    plantModel.dV_in = dV_in;
+    % plantModel.dV_in = dV_in;
+    plantModel.valveInOpenRatio = 0.1;
   end
   
   if i == round((3*(60/bpm) + Itime) * (1/dT))
-    plantModel.dV_in = 0;
+    % plantModel.dV_in = 0;
+    plantModel.valveInOpenRatio = 0;
     plantModel.valveOutOpenRatio = 0.2;
   end
   

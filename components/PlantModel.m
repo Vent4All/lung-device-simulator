@@ -74,14 +74,10 @@ classdef PlantModel < handle
         % For example, look at the Burkert Proportional Solenoid Valve 238934, 2 port , NC, 24 V dc, 1/8in
         % You see that the flow coefficient (kv/kvs ratio) varies linearly with
         % the driving current/voltage.Based on current understanding, this is considered to be valid.
-##        
-##        % Compute inlet flow (check condition pd>pu/2!   
-##        if obj.pRS > obj.pD / 2 
-##          obj.dV_in = (obj.valveInOpenRatio * obj.kv) * 514 / sqrt((obj.T*rho)/(obj.pRS*(obj.pD-obj.pRS)));
-##        else
-##          obj.dV_in = (obj.valveInOpenRatio * obj.kv) * 257 * obj.pD / sqrt(obj.T*rho);
-##        end
-##        
+        
+        % Compute inlet flow  
+        obj.dV_in = obj.valveInOpenRatio * computeValveFlow(obj.T, obj.pD, obj.pRS, obj.oD_in);  
+        
         % Compute outlet flow  
         obj.dV_out = obj.valveOutOpenRatio * computeValveFlow(obj.T, obj.pRS, obj.p0, obj.oD_out);   
         
