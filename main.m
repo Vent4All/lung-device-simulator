@@ -19,7 +19,8 @@ addpath('./components')
 %% Parameters %%
 %%%%%%%%%%%%%%%%
 % Valve
-kv = 0.3;           % Flow coefficient in m3/h [5]
+oD_in = 2;           % Orifice diameter in mm
+oD_out = 10;           % Orifice diameter in mm
 
 % Respiratory system
 Rrs = 6;            % Airway resistance in cmH20/L/sec [4, p8]
@@ -29,8 +30,6 @@ pMax = 1060;        % maximum pressure in cmH20
 
 % Environment
 p0 = 1033;          % Ambient perssure in cmH20
-rho_d_air = 1.205;  % density of air (gas) in kg/m3 at 273.15 Kelvin and 1013mbar / 1 atm [3]
-rho_d_o2 = 1.331;   % density of oxygen (gas) in kg/m3 at 273.15 Kelvin and 1013mbar / 1 atm [3]
 T = 293.15;         % Upstream temperature in Kelvin (20 degrees Celsius)
 
 % Device settings
@@ -47,7 +46,7 @@ pD = 4000;          % Device tank pressure in cmH2O
 %%%%%%%%%%%%%%%%
 
 % Initialize actors
-plantModel = PlantModel(p0, pD, pMax, Ers, ratioE2, Rrs, rho_d_air, rho_d_o2, T, kv, PEEP);
+plantModel = PlantModel(p0, pD, pMax, Ers, ratioE2, Rrs, T, oD_in, oD_out, PEEP);
 plantModel.adjustFiO2(fio2);
 plantModel.valveInOpenRatio = 0.1;
 
@@ -60,9 +59,7 @@ tEnd = 24.0;
 ## flow = TV / Itijd
 Itime = (60/bpm) * (1 / (ieRatio + 1));
 dV_in_L = TV / Itime;
-dV_in = dV_in_L * 3.6; % L/s -> m3/h
-plantModel.dV_in = dV_in;
-plantModel.dV = dV_in;
+dV_in = dV_in_L / 1000; % L/s -> m3/s
 
 % Simulation results
 pressure = zeros(1, tEnd/dT + 1);
@@ -85,12 +82,20 @@ while i <= (tEnd / dT) + 1
   volume(1,i) = plantModel.V; 
   
   % Cycle 1
+  if i == round(0.2 * (1/dT))
+     plantModel.dV_in = dV_in;
+  end
+  
+  if i == round(0.5 * (1/dT))
+    % break;
+  end
+  
   if i == round(Itime * (1/dT))
     plantModel.dV_in = 0;
     plantModel.valveOutOpenRatio = 0.1;
   end
-  
-  if i == round(3.05 * (1/dT))
+   
+  if i == round(2.8 * (1/dT))
     plantModel.valveOutOpenRatio = 0.0;
   end
   
@@ -145,7 +150,7 @@ endwhile
 % Plot graphs
 figure(1);
 subplot(3,1,1);
-plot(time, pressure * 1019.72 - p0, 'DisplayName','P_{aw}');
+plot(time, pressure / 98.0665 - p0, 'DisplayName','P_{aw}');
 hold on;
 plot([0,time(1,end)],[PEEP,PEEP], 'k--', 'DisplayName','PEEP')
 hold off;
@@ -155,7 +160,7 @@ xlim([0, tEnd])
 legend
 
 subplot(3,1,2); 
-plot(time, flow * 1000 / 3600, 'DisplayName',"V'(t)");
+plot(time, flow * 1000, 'DisplayName',"V'(t)");
 xlabel('t (s)') 
 ylabel('L/s') 
 xlim([0, tEnd])
@@ -168,4 +173,5 @@ ylabel('L')
 xlim([0, tEnd])
 legend
 
+csvwrite('data.csv', [time; pressure / 98.0665 - p0]')
 disp('Done!');
